@@ -21,7 +21,7 @@ export default function Loader() {
       const total = 100;
       function easeOut(t: number) { return 1 - Math.pow(1 - t, 2); }
       const startTime = performance.now();
-      const duration = 5000;
+      const duration = 8000;
       let logoSwapped = false;
 
       function step(now: number) {
