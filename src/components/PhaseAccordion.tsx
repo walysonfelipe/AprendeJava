@@ -26,13 +26,12 @@ export default function PhaseAccordion() {
           <div
             className="phase-header"
             onClick={() => toggle(i)}
-            style={{ display:'flex', alignItems:'center', gap:'12px', padding:'0.85rem 1.1rem', cursor:'pointer', userSelect:'none' }}
           >
             <span className="badge" style={{ fontSize:'11px', fontWeight:500, padding:'3px 10px', borderRadius:'99px', whiteSpace:'nowrap', ...badgeStyles[p.badge] }}>
               {p.label}
             </span>
-            <span style={{ fontSize:'15px', fontWeight:500, color:'#e2e1de', flex:1 }}>{p.num}. {p.title}</span>
-            <span style={{ fontSize:'12px', color:'#5a5956' }}>{p.duration}</span>
+            <span className="title" style={{ fontSize:'15px', fontWeight:500, color:'#e2e1de' }}>{p.num}. {p.title}</span>
+            <span className="duration" style={{ fontSize:'12px', color:'#5a5956' }}>{p.duration}</span>
             <span className={`chevron${open === i ? ' open' : ''}`}>&#9654;</span>
           </div>
           <div className={`phase-body${open === i ? ' open' : ''}`}>

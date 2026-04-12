@@ -16,4 +16,5 @@ export const videos: Video[] = [
   { url: "https://www.youtube.com/watch?v=hwttZtWkXTk", nome: "HTTP // Dicionário do Programador", canal: "Código Fonte TV" },
   { url: "https://www.youtube.com/playlist?list=PLNCSWIsR6ADI_wMAx9F-Iu8Hs9HHxj4sb", nome: "Curso de JAVA + SPRING completo", canal: "Fernanda Kipper | Dev" },
   { url: "https://www.youtube.com/watch?v=v1zWMyYEOPw", nome: "O QUE É SPRING BOOT | Conceito, Vantagens e Como Funciona", canal: "Shaolin do Java" },
+  { url: "https://www.youtube.com/watch?v=OIYWA1GwCEs", nome: "Se não aprender JAVA com esse video. - ̗̀ DESISTE ̖́- - Curso de programacao iniciante", canal: "Fiasco" },
 ];
