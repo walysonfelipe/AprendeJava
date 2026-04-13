@@ -1,73 +1,120 @@
 'use client';
 import { useState } from 'react';
-import { phases } from '@/data/phases';
+import { Phase } from '@/data/phases';
 
-const badgeStyles: Record<string, React.CSSProperties> = {
-  'badge-purple': { background: '#1e1a3a', color: '#a89cef' },
-  'badge-teal':   { background: '#0d2620', color: '#4dc9a4' },
-  'badge-blue':   { background: '#0d1e30', color: '#6aaeea' },
-  'badge-amber':  { background: '#2a1a08', color: '#d4922a' },
-  'badge-coral':  { background: '#2a1008', color: '#e07a55' },
-  'badge-green':  { background: '#122009', color: '#72c44a' },
-  'badge-indigo': { background: '#141430', color: '#8886e8' },
+const badge: Record<string, string> = {
+  'badge-purple': 'bg-[#1e1a3a] text-[#a89cef]',
+  'badge-teal':   'bg-[#0d2620] text-[#4dc9a4]',
+  'badge-blue':   'bg-[#0d1e30] text-[#6aaeea]',
+  'badge-amber':  'bg-[#2a1a08] text-[#d4922a]',
+  'badge-coral':  'bg-[#2a1008] text-[#e07a55]',
+  'badge-green':  'bg-[#122009] text-[#72c44a]',
+  'badge-indigo': 'bg-[#141430] text-[#8886e8]',
 };
 
-export default function PhaseAccordion() {
+export default function PhaseAccordion({ phases }: { phases: Phase[] }) {
   const [open, setOpen] = useState<number | null>(null);
 
-  function toggle(i: number) {
-    setOpen(prev => prev === i ? null : i);
-  }
-
   return (
-    <div id="phases">
-      {phases.map((p, i) => (
-        <div key={p.num} className="phase" style={{ marginBottom:'1rem', border:'0.5px solid #2e2e2c', borderRadius:'12px', overflow:'hidden', background:'#1a1a18' }}>
+    <div className="flex flex-col gap-3">
+      {phases.map((p, i) => {
+        const isOpen = open === i;
+        return (
           <div
-            className="phase-header"
-            onClick={() => toggle(i)}
+            key={p.num}
+            className="border border-[#2e2e2c] rounded-xl overflow-hidden bg-[#1a1a18] transition-colors duration-150"
           >
-            <span className="badge" style={{ fontSize:'11px', fontWeight:500, padding:'3px 10px', borderRadius:'99px', whiteSpace:'nowrap', ...badgeStyles[p.badge] }}>
-              {p.label}
-            </span>
-            <span className="title" style={{ fontSize:'15px', fontWeight:500, color:'#e2e1de' }}>{p.num}. {p.title}</span>
-            <span className="duration" style={{ fontSize:'12px', color:'#5a5956' }}>{p.duration}</span>
-            <span className={`chevron${open === i ? ' open' : ''}`}>&#9654;</span>
-          </div>
-          <div className={`phase-body${open === i ? ' open' : ''}`}>
-            {p.groups
-              ? p.groups.map(g => (
-                  <div key={g.label} style={{ marginBottom:'0.75rem' }}>
-                    <div style={{ fontSize:'11px', fontWeight:600, color:'#3e3e3c', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:'2px', paddingLeft:'2px' }}>{g.label}</div>
-                    <ul style={{ listStyle:'none', marginBottom:'0.9rem' }}>
-                      {g.items.map((t, j) => (
-                        <li key={j} style={{ fontSize:'13.5px', color:'#9a9894', padding:'4px 0', paddingLeft:'14px', position:'relative', lineHeight:1.5 }}>
-                          <span style={{ position:'absolute', left:0, color:'#3e3e3c' }}>–</span>{t}
-                        </li>
+            {/* Header */}
+            <button
+              className="w-full flex items-center gap-3 px-4 py-3.5 cursor-pointer text-left"
+              onClick={() => setOpen(isOpen ? null : i)}
+              aria-expanded={isOpen}
+            >
+              <span className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full flex-shrink-0 ${badge[p.badge] ?? ''}`}>
+                {p.label}
+              </span>
+              <span className="flex-1 text-[14px] sm:text-[15px] font-medium text-[#e2e1de] text-left">
+                {p.num}. {p.title}
+              </span>
+              <span className="text-[11px] text-[#5a5956] flex-shrink-0 hidden sm:block">{p.duration}</span>
+              <svg
+                width="12" height="12"
+                viewBox="0 0 24 24" fill="none"
+                stroke="#3e3e3c" strokeWidth="2.5"
+                strokeLinecap="round" strokeLinejoin="round"
+                className={`flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+
+            {/* Duration — mobile only, below title */}
+            {isOpen && (
+              <div className="sm:hidden px-4 pb-2 text-[11px] text-[#5a5956]">{p.duration}</div>
+            )}
+
+            {/* Accordion body */}
+            <div className={`acc-body ${isOpen ? 'open' : ''}`}>
+              <div className="acc-inner">
+                <div className="border-t border-[#2e2e2c] px-4 py-4 flex flex-col gap-4">
+
+                  {/* Groups */}
+                  {p.groups
+                    ? p.groups.map(g => (
+                        <div key={g.label}>
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#3e3e3c] mb-2">
+                            {g.label}
+                          </p>
+                          <ul className="flex flex-col gap-1">
+                            {g.items.map((t, j) => (
+                              <li key={j} className="flex gap-2.5 text-[13px] text-[#9a9894] leading-relaxed">
+                                <span className="text-[#3e3e3c] flex-shrink-0 mt-0.5">–</span>
+                                <span>{t}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))
+                    : (
+                        <ul className="flex flex-col gap-1">
+                          {p.topics?.map((t, j) => (
+                            <li key={j} className="flex gap-2.5 text-[13px] text-[#9a9894] leading-relaxed">
+                              <span className="text-[#3e3e3c] flex-shrink-0 mt-0.5">–</span>
+                              <span>{t}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )
+                  }
+
+                  {/* Resources */}
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#3e3e3c] mb-2">
+                      Recursos recomendados
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {p.resources.map(r => (
+                        <span
+                          key={r}
+                          className="text-[11px] px-2.5 py-1 rounded-full border border-[#2e2e2c] text-[#9a9894] bg-[#141412]"
+                        >
+                          {r}
+                        </span>
                       ))}
-                    </ul>
+                    </div>
                   </div>
-                ))
-              : (
-                <ul style={{ listStyle:'none', marginBottom:'0.9rem' }}>
-                  {p.topics?.map((t, j) => (
-                    <li key={j} style={{ fontSize:'13.5px', color:'#9a9894', padding:'4px 0', paddingLeft:'14px', position:'relative', lineHeight:1.5 }}>
-                      <span style={{ position:'absolute', left:0, color:'#3e3e3c' }}>–</span>{t}
-                    </li>
-                  ))}
-                </ul>
-              )
-            }
-            <div style={{ fontSize:'11px', fontWeight:500, color:'#3e3e3c', textTransform:'uppercase', letterSpacing:'0.04em', marginBottom:'6px' }}>Recursos recomendados</div>
-            <div style={{ display:'flex', flexWrap:'wrap', gap:'6px', marginBottom:'0.75rem' }}>
-              {p.resources.map(r => (
-                <span key={r} style={{ fontSize:'12px', padding:'3px 10px', borderRadius:'99px', border:'0.5px solid #2e2e2c', color:'#9a9894', background:'#141412' }}>{r}</span>
-              ))}
+
+                  {/* Tip */}
+                  <div className="[border-left:2px_solid_#2a5a8a] pl-3 py-1 bg-[#141412] rounded-r-lg">
+                    <p className="text-[12.5px] text-[#9a9894] leading-relaxed">{p.tip}</p>
+                  </div>
+
+                </div>
+              </div>
             </div>
-            <div style={{ fontSize:'12.5px', color:'#9a9894', background:'#141412', borderLeft:'2.5px solid #2a5a8a', borderRadius:'0 8px 8px 0', padding:'8px 12px', lineHeight:1.5 }}>{p.tip}</div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
